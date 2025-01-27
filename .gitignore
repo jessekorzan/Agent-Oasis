@@ -3,5 +3,5 @@ node_modules
 dist
 dist-ssr
 *.local
-vite.*
+vite.config.js.*
 package-lock.json	
