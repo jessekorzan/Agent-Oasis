@@ -1,3 +1,5 @@
+
+// Import required dependencies
 import express from 'express';
 import OpenAI from 'openai';
 import bodyParser from 'body-parser';
@@ -5,19 +7,25 @@ import puppeteer from 'puppeteer-extra';
 import { exec } from "child_process";
 import { promisify } from "util";
 
+// Add stealth plugin to puppeteer to avoid detection
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 puppeteer.use(StealthPlugin())
 
+// Initialize Express app and configure body parser middleware
 const api = express();
 api.use(bodyParser.json({limit: '50mb'}));
 api.use(bodyParser.urlencoded({ extended: false }));
 api.use(bodyParser.json());
 
+// Initialize OpenAI with API key from environment variables
 const openai = new OpenAI({
   apiKey: process.env['apiKey'],
 });
 
+// Store conversation history
 const messages = [];
+
+// Define the AI's personality and behavior
 const SYSTEM_PROMPT = `
 
 You are are the worlds biggest Oasis fan. Your job is to interact with other fans and help them grow their Oasis fandom.
@@ -75,10 +83,13 @@ If the user specifically asked for an Image, use oasis_image_search function to 
 Use citations when possible. There have been complaints you are not using verifiable facts.
 `
 
+// Initialize conversation with system prompt
 messages.push({
     role: 'system',
     content: SYSTEM_PROMPT
 });
+
+// Function to provide conversation suggestions
 function suggestions() {
   const prompts = [
     "Let's chat about the greatest Oasis gigs you've been to, yeah?",
@@ -89,14 +100,20 @@ function suggestions() {
   ];
   return prompts[Math.floor(Math.random() * prompts.length)];
 }
+
+// Function to provide help message
 function help() {
   return `Oi, mate, if you ain't buzzin' for Oasis yet, let's sort that out. Hit me up with anythin' you wanna know. Got vids to watch, pics to gander at, and tunes to belt out. Proper mint, innit?`
 }
+
+// Function to search DuckDuckGo for Oasis content
 async function oasis_search(term) {
     let _q = `https://duckduckgo.com/?t=h_&q=${term}`;
     const result = await search(_q);
     return result
 }
+
+// Function to search DuckDuckGo for Oasis images
 async function oasis_images(term) {
     let _q = `https://duckduckgo.com/?t=h_&q=${term}&iax=images&ia=images`;
     const result = await searchImages(_q);
@@ -104,17 +121,20 @@ async function oasis_images(term) {
     const trimmedResult = result.toString().slice(0, 10000);
     return trimmedResult;
 }
+
+// Placeholder function for band member information
 async function band_members(name) {
     await new Promise(resolve => setTimeout(resolve, 2000));
-
     return 'liam and noel and search the web for the 2025 line-up'
 }
+
+// Placeholder function for song lyrics
 async function song_lyrics(song) {
-    
     await new Promise(resolve => setTimeout(resolve, 2000));
     return 'random lines of any oasis song with who wrote it, the ablum and the year of publishing'
 }
 
+// Map function names to their implementations
 const function_map = {
     'band_members' : band_members,
     'song_lyrics' : song_lyrics,
@@ -124,6 +144,7 @@ const function_map = {
     'help' : help
 };
 
+// Function to perform web searches using puppeteer
 async function search(URL) {
   let browser = null;
   try {
@@ -142,10 +163,8 @@ async function search(URL) {
       timeout: 60000 
     });
 
-    // Wait for any search results to be visible
+    // Wait for search results and extract text
     await page.waitForSelector('body', { timeout: 30000 });
-    
-    // Get all text content
     const elementText = await page.evaluate(() => document.querySelector('.react-results--main').innerText);
     console.log(elementText)
     return elementText;
@@ -158,6 +177,8 @@ async function search(URL) {
     }
   }
 }
+
+// Function to search for images using puppeteer
 async function searchImages(URL) {
   let browser = null;
   try {
@@ -176,10 +197,8 @@ async function searchImages(URL) {
       timeout: 60000 
     });
 
-    // Wait for any search results to be visible
+    // Wait for image results and extract HTML
     await page.waitForSelector('.zci-wrap', { timeout: 30000 });
-
-    // Get all text content
     const elementText = await page.evaluate(() => document.querySelector('.zci-wrap').innerHTML);
     console.log(elementText)
     return elementText;
@@ -193,7 +212,7 @@ async function searchImages(URL) {
   }
 }
 
-
+// Process AI response and handle different response types
 async function process_llm_response(response, res) {
     const parsedJson = JSON.parse(response);
 
@@ -203,12 +222,11 @@ async function process_llm_response(response, res) {
         const fn = parsedJson.function_call.function;
         const args = parsedJson.function_call.arguments;
         
-        // Send status to frontend
+        // Send status updates to frontend
         res.write(`data: {"status": "Enaging ${fn.replace('_', ' ')}..."}\n\n`);
         
         const functionResponse = await function_map[fn].apply(null, args);
         
-        // Send completion status
         res.write(`data: {"status": "Thinking about ${args}..."}\n\n`);
         
         const llmResponse = await send_to_llm('response is ' + functionResponse);
@@ -216,8 +234,7 @@ async function process_llm_response(response, res) {
     }
 }
 
-
-
+// Send message to OpenAI and get response
 async function send_to_llm(payload) {
     try {
         messages.push({
@@ -238,9 +255,10 @@ async function send_to_llm(payload) {
     }
 };
 
+// Handle incoming POST requests
 api.post('/in', async (req, res) => {
     try {
-        // Setup SSE
+        // Setup Server-Sent Events
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
