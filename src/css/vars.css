@@ -1,0 +1,21 @@
+html {
+    --white : #ffffff;
+    --bg: #c5cbce;
+    --roseGrey: #EAEBED;
+    --boxShadow: #4C5E6566;
+    --black: #243B41;
+    --purple: #620DEC;
+    --yellow: #F6DE00;
+    --yellowLight:#fffbd6;
+    --red: #EE523B;
+    --redLight: #fc585f22;
+    --green: #44bc8f;
+    --greenLight: #44bc8f22;
+    --blue:  #3751FF;
+    --blueLight:  #3751FF22;
+    --spacer: 60px;
+    --border-size: 4px;
+
+    --text: var(--black);
+    --border: var(--boxShadow);
+}

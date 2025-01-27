@@ -1,0 +1,32 @@
+{
+  "name": "karaoke-email",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "uses Vite bundler",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "node api/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "https": "^1.0.0",
+    "karaoke-email": "file:",
+    "node-fetch": "^3.2.6",
+    "openai": "^4.55.4",
+    "puppeteer": "^19.7.5",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "vite": "^4.1.1"
+  }
+}
