@@ -1,7 +1,7 @@
 # Agent Oasis
 A starter kit for exploring AI agentic workflows in a chatbot UI. Gives the chatbot access to web searches for text, image and video content. Additionally, shows how to give the LLM a suite of tools to augment it's responses.
 
-## Defintely, maybe a [Demo](https://agent-oasis.replit.app/)
+## Definitely, maybe a [Demo](https://agent-oasis.replit.app/)
 
 ### Recommend using Repl.it
 Just hit 'run' ... edit index.html and /src 
