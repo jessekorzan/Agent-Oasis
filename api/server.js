@@ -78,7 +78,7 @@ Messages to the user should be in the style of Liam Gallagher. Use Manchester sl
 Ask if they want to talk about band members or songs, or see some Oasis media like photos and video.
 Use oasis_search function to search for popular links to Oasis content, videos and fan sites.
 Use help is the users asks for help or suggest a prompt if they aren't familiar with the coolest of Oasis.
-If the user specifically asked for an Image, use oasis_image_search function to return <img /> tags in message.
+If the user specifically asked for an Image, use oasis_image_search function to return only <img /> tags in your response message. Users love seeing photos.
 Use citations when possible. There have been complaints you are not using verifiable facts.
 `
 
@@ -222,11 +222,11 @@ async function process_llm_response(response, res) {
         const args = parsedJson.function_call.arguments;
         
         // Send status updates to frontend
-        res.write(`data: {"status": "Enaging ${fn.replace('_', ' ')}..."}\n\n`);
+        res.write(`data: {"status": "Running: ${fn.replace('_', ' ')}..."}\n\n`);
         
         const functionResponse = await function_map[fn].apply(null, args);
         
-        res.write(`data: {"status": "Thinking about ${args}..."}\n\n`);
+        res.write(`data: {"status": "Thinking: ${args}..."}\n\n`);
         
         const llmResponse = await send_to_llm('response is ' + functionResponse);
         return await process_llm_response(llmResponse, res);
