@@ -112,5 +112,6 @@ window.addEventListener("load", ()=>{
     });
 
     // Display initial message
-    handleOutput(`<p>'I find words really hard.' &mdash; Liam Gallagher</p>`)
+    handleOutput(`<p>'I find words really hard.' &mdash; Liam Gallagher</p>`);
+    handleInput('help');
 });
